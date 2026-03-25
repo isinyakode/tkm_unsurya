@@ -153,9 +153,13 @@
                                             <option value="" selected>-- Pilih Status --</option>
                                             <option value="Ditolak" <?= $kegiatan['status_pengajuan'] == 'Ditolak' ? 'selected' : '' ?>>Tolak (Reject)</option>
                                             <option value="Revisi" <?= $kegiatan['status_pengajuan'] == 'Revisi' ? 'selected' : '' ?>>Revisi (Revision)</option>
-                                            <option value="<?= ($otoritas === "WAREK III" || $otoritas === "Kabiro Mahasiswa" ? "Disetujui" : "Diverifikasi") ?>">
-                                                <?= ($otoritas === "WAREK III" || $otoritas === "Kabiro Mahasiswa" ? "Disetujui (Accept)" : "Diverifikasi (Verify)") ?>
-                                            </option>
+                                            <?php if($otoritas === "WAREK III" || $otoritas === "Kabiro Mahasiswa"): ?>
+                                            <option value="Disetujui"> Disetujui (Accept) </option>
+                                            <?php elseif($otoritas === "ORMAWA DAN ALUMNI"): ?>
+                                                <option value="Ditinjau"> Ditinjau (Review) </option>
+                                            <?php elseif($otoritas === "KETUA PROGRAM STUDI"): ?>
+                                                <option value="Diverifikasi"> Diverifikasi (Verify) </option>
+                                            <?php endif; ?>;
                                         </select>
                                     </div>
                                 </div>
