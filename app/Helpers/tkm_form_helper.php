@@ -46,3 +46,28 @@ if (!function_exists('get_dynamic_validation_rules')) {
         return $rules;
     }
 }
+
+if (!function_exists('render_status_verifikasi_select')) {
+    function render_status_verifikasi_select($status_saat_ini, $otoritas)
+    {
+        $html = '<div class="form-group p-0 mb-3">
+                    <label class="fw-bold mb-1">Status Verifikasi</label>
+                    <select name="status_pengajuan" class="form-select border-primary" required>
+                        <option value="" ' . ($status_saat_ini == '' ? 'selected' : '') . '>-- Pilih Status --</option>
+                        <option value="Ditolak" ' . ($status_saat_ini == 'Ditolak' ? 'selected' : '') . '>Tolak (Reject)</option>
+                        <option value="Revisi" ' . ($status_saat_ini == 'Revisi' ? 'selected' : '') . '>Revisi (Revision)</option>';
+        
+        if ($otoritas === "WAREK III" || $otoritas === "Kabiro Mahasiswa") {
+            $html .= '<option value="Disetujui" ' . ($status_saat_ini == 'Disetujui' ? 'selected' : '') . '> Disetujui (Accept) </option>';
+        } elseif ($otoritas === "ORMAWA DAN ALUMNI") {
+            $html .= '<option value="Ditinjau" ' . ($status_saat_ini == 'Ditinjau' ? 'selected' : '') . '> Ditinjau (Review) </option>';
+        } elseif ($otoritas === "KETUA PROGRAM STUDI") {
+            $html .= '<option value="Diverifikasi" ' . ($status_saat_ini == 'Diverifikasi' ? 'selected' : '') . '> Diverifikasi (Verify) </option>';
+        }
+
+        $html .= '</select>
+                </div>';
+
+        return $html;
+    }
+}

@@ -43,7 +43,7 @@ class Verifikasi extends BaseController
         $this->KreditPenilaianModel = new KreditPenilaianModel();
         $this->LogsModel = new LogsModel();
         $this->session = session();
-        helper(['auth_helper', 'auth']);
+        helper(['auth_helper', 'auth', 'tkm_form_helper']);
     }
 
     public function index()

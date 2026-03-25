@@ -146,23 +146,7 @@
                                 <?= csrf_field(); ?>
                                 <input type="hidden" name="id_kegiatan" value="<?= $kegiatan['id_kegiatan']; ?>">
 
-                                <div class="form-group p-0 mb-3">
-                                    <div class="form-group p-0 mb-3">
-                                        <label class="fw-bold mb-1">Status Verifikasi</label>
-                                        <select name="status_pengajuan" class="form-select border-primary" required>
-                                            <option value="" selected>-- Pilih Status --</option>
-                                            <option value="Ditolak" <?= $kegiatan['status_pengajuan'] == 'Ditolak' ? 'selected' : '' ?>>Tolak (Reject)</option>
-                                            <option value="Revisi" <?= $kegiatan['status_pengajuan'] == 'Revisi' ? 'selected' : '' ?>>Revisi (Revision)</option>
-                                            <?php if($otoritas === "WAREK III" || $otoritas === "Kabiro Mahasiswa"): ?>
-                                            <option value="Disetujui"> Disetujui (Accept) </option>
-                                            <?php elseif($otoritas === "ORMAWA DAN ALUMNI"): ?>
-                                                <option value="Ditinjau"> Ditinjau (Review) </option>
-                                            <?php elseif($otoritas === "KETUA PROGRAM STUDI"): ?>
-                                                <option value="Diverifikasi"> Diverifikasi (Verify) </option>
-                                            <?php endif; ?>;
-                                        </select>
-                                    </div>
-                                </div>
+                                <?= render_status_verifikasi_select($kegiatan['status_pengajuan'], $otoritas); ?>
                                 <div class="form-group p-0 mb-3">
                                     <label class="fw-bold mb-1">Catatan Ke Mahasiswa</label>
                                     <textarea name="catatan" class="form-control border-primary" rows="3" placeholder="Berikan alasan jika ditolak atau perlu revisi..."></textarea>
