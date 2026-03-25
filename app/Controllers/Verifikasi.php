@@ -43,13 +43,11 @@ class Verifikasi extends BaseController
         $this->KreditPenilaianModel = new KreditPenilaianModel();
         $this->LogsModel = new LogsModel();
         $this->session = session();
+        helper(['auth_helper', 'auth']);
     }
 
     public function index()
     {
-        // Cukup panggil 'auth', CI4 otomatis mencari auth_helper.php
-        helper(['auth_helper', 'auth']);
-
         $otoritas_aktif = "";
 
         $otoritas_aktif = get_otoritas_verifikasi();
@@ -108,6 +106,7 @@ class Verifikasi extends BaseController
 
     public function proses_verifikasi()
     {
+        $otoritas_aktif = "";
         $otoritas_aktif = get_otoritas_verifikasi();
         if (!$otoritas_aktif) {
             return redirect()->to('/Dashboard')->with('error', 'Akses ditolak.');
