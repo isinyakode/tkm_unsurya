@@ -10,9 +10,10 @@ class KegiatanMahasiswaModel extends Model
     protected $primaryKey = 'id_kegiatan';
 
     protected $returnType = 'array';
-    protected $useSoftDeletes = true;
+    protected $useSoftDeletes = false;
 
     protected $allowedFields = [
+        'tipe_kegiatan',
         'nim_pengaju',
         'id_jenis_kegiatan',
         'id_elemen_penilaian',
@@ -30,7 +31,6 @@ class KegiatanMahasiswaModel extends Model
     protected $useTimestamps = true;
     protected $createdField = 'created_at';
     protected $updatedField = 'updated_at';
-    protected $deletedField = 'deleted_at';
 
     public function getnim(string $nim_pengaju): ?array
     {
@@ -40,12 +40,11 @@ class KegiatanMahasiswaModel extends Model
             ->get()->getRowArray();
     }
 
-    public function getBySlug(string $slug): ?array
+    public function getBySlug(string $slug, string $nim = null): ?array
     {
-        return $this->where('slug_kegiatan_mahasiswa', $slug)->first();
+        $builder = $this->where(['slug_kegiatan_mahasiswa' => $slug, 'nim_pengaju' => $nim]);
+        return $builder->first();
     }
-
-
 
     public function getallkegiatan($nim_pengaju = null): ?array
     {
@@ -103,7 +102,8 @@ class KegiatanMahasiswaModel extends Model
                   kegiatan_mahasiswa_anggota.*')
                 ->join('kegiatan_mahasiswa_anggota', 'kegiatan_mahasiswa_anggota.id_kegiatan = kegiatan_mahasiswa.id_kegiatan')
                 ->where('kegiatan_mahasiswa.status_pengajuan', $status)
-                ->where('kegiatan_mahasiswa_anggota.nim', $nim) // Memastikan hanya yang terlibat yang bisa akses
+                ->where('kegiatan_mahasiswa_anggota.nim', $nim)
+                ->where('kegiatan_mahasiswa.deleted_at', null)
                 ->get()->getResultArray();
         }
 
@@ -111,7 +111,8 @@ class KegiatanMahasiswaModel extends Model
             ->select('kegiatan_mahasiswa.*, 
                   kegiatan_mahasiswa_anggota.*')
             ->join('kegiatan_mahasiswa_anggota', 'kegiatan_mahasiswa_anggota.id_kegiatan = kegiatan_mahasiswa.id_kegiatan')
-            ->where('kegiatan_mahasiswa_anggota.nim', $nim) // Memastikan hanya yang terlibat yang bisa akses
+            ->where('kegiatan_mahasiswa_anggota.nim', $nim)
+            ->where('kegiatan_mahasiswa.deleted_at', null)
             ->get()->getResultArray();
     }
 
@@ -124,6 +125,7 @@ class KegiatanMahasiswaModel extends Model
                 ->join('kegiatan_mahasiswa_anggota', 'kegiatan_mahasiswa_anggota.id_kegiatan = kegiatan_mahasiswa.id_kegiatan')
                 ->where('kegiatan_mahasiswa.status_pengajuan', 'Disetujui')
                 ->where('kegiatan_mahasiswa_anggota.nim', $nim)
+                ->where('kegiatan_mahasiswa.deleted_at', null)
                 ->get()->getResultArray();
         }
 
@@ -132,6 +134,7 @@ class KegiatanMahasiswaModel extends Model
                   kegiatan_mahasiswa_anggota.*')
             ->join('kegiatan_mahasiswa_anggota', 'kegiatan_mahasiswa_anggota.id_kegiatan = kegiatan_mahasiswa.id_kegiatan')
             ->where('kegiatan_mahasiswa.status_pengajuan', 'Disetujui')
+            ->where('kegiatan_mahasiswa.deleted_at', null)
             ->groupBy('kegiatan_mahasiswa_anggota.nim')
             ->get()->getResultArray();
     }
@@ -141,6 +144,7 @@ class KegiatanMahasiswaModel extends Model
         return $this->db->table('kegiatan_mahasiswa')
             ->select('kegiatan_mahasiswa.*, kegiatan_mahasiswa_anggota.*')
             ->join('kegiatan_mahasiswa_anggota', 'kegiatan_mahasiswa_anggota.id_kegiatan = kegiatan_mahasiswa.id_kegiatan')
+            ->where('kegiatan_mahasiswa.deleted_at', null)
             ->groupBy('kegiatan_mahasiswa_anggota.nim')
             ->get()->getResultArray();
     }
@@ -163,6 +167,7 @@ class KegiatanMahasiswaModel extends Model
             ->select('id_jenis_kegiatan')
             ->select("SUM(CASE WHEN MONTH(created_at) IN (9,10,11,12,1,2) THEN 1 ELSE 0 END) as ganjil")
             ->select("SUM(CASE WHEN MONTH(created_at) NOT IN (9,10,11,12,1,2) THEN 1 ELSE 0 END) as genap")
+            ->where('deleted_at', null)
             ->groupBy('id_jenis_kegiatan')
             ->get()->getResultArray();
     }
@@ -171,6 +176,7 @@ class KegiatanMahasiswaModel extends Model
     {
         return $this->table('kegiatan_mahasiswa')
             ->select("MONTH(created_at) as bulan, status_pengajuan, COUNT(*) as total")
+            ->where('deleted_at', null)
             ->groupBy("MONTH(created_at), status_pengajuan")
             ->orderBy("MONTH(created_at)", "ASC")
             ->get()
@@ -185,6 +191,7 @@ class KegiatanMahasiswaModel extends Model
             ->select("COUNT(CASE WHEN MONTH(kegiatan_mahasiswa.created_at) IN (3,4,5,6,7,8) THEN kegiatan_mahasiswa.id_kegiatan END) as total_genap")
             ->join('kegiatan_mahasiswa_anggota kma', 'kma.id_kegiatan = kegiatan_mahasiswa.id_kegiatan')
             ->where('kegiatan_mahasiswa.status_pengajuan', 'Disetujui')
+            ->where('kegiatan_mahasiswa.deleted_at', null)
             ->groupBy('kma.fakultas')
             ->get()->getResultArray();
     }
@@ -197,6 +204,7 @@ class KegiatanMahasiswaModel extends Model
             ->select("COUNT(CASE WHEN MONTH(kegiatan_mahasiswa.created_at) IN (3,4,5,6,7,8) THEN kegiatan_mahasiswa.id_kegiatan END) as total_genap")
             ->join('kegiatan_mahasiswa_anggota kma', 'kma.id_kegiatan = kegiatan_mahasiswa.id_kegiatan')
             ->where('kegiatan_mahasiswa.status_pengajuan', 'Disetujui')
+            ->where('kegiatan_mahasiswa.deleted_at', null)
             ->groupBy('kma.prodi')
             ->get()->getResultArray();
     }
@@ -210,6 +218,7 @@ class KegiatanMahasiswaModel extends Model
                 ->join('kegiatan_mahasiswa km', 'km.id_kegiatan = kma.id_kegiatan')
                 ->where('km.status_pengajuan', 'Disetujui')
                 ->where('kma.nim', $nim)
+                ->where('km.deleted_at', null)
                 ->groupBy('kma.nim')
                 ->orderBy('total_point', 'DESC')
                 ->limit(10)
@@ -220,6 +229,7 @@ class KegiatanMahasiswaModel extends Model
             ->select('SUM(kma.total_kredit) as total_point')
             ->join('kegiatan_mahasiswa km', 'km.id_kegiatan = kma.id_kegiatan')
             ->where('km.status_pengajuan', 'Disetujui')
+            ->where('km.deleted_at', null)
             ->groupBy('kma.nim')
             ->orderBy('total_point', 'DESC')
             ->limit(10)

@@ -459,47 +459,42 @@ class ActivityService
     }
 
     // DELETE
-    public function softDeleteActivity($idK)
+    public function softDeleteActivity(array $kegiatan)
     {
-        $db = Database::connect();
-
-        // 1. Ambil data kegiatan untuk mendapatkan info file & folder
-        $kegiatan = $db->table('kegiatan_mahasiswa')
-            ->where('id_kegiatan', $idK)
-            ->get()->getRowArray();
-
-        if (!$kegiatan) return false;
-
-        $db->transBegin();
+        $idK = $kegiatan['id_kegiatan'];
 
         try {
-            // 2. Hapus File Fisik
+            // 1. Hapus File Fisik
             $nim  = $kegiatan['nim_pengaju'];
             $slug = $kegiatan['slug_kegiatan_mahasiswa'];
             $pathFolder = FCPATH . 'uploads/tkm/' . $nim . '/' . $slug . '/';
-            $fullPathFile = $pathFolder . $kegiatan['file_laporan'];
+            $fullPathFile = $pathFolder . ($kegiatan['file_laporan'] ?? '');
 
             if (!empty($kegiatan['file_laporan']) && file_exists($fullPathFile)) {
-                unlink($fullPathFile);
+                @unlink($fullPathFile);
             }
 
-            // 3. Opsional: Hapus folder jika kosong agar server bersih
-            if (is_dir($pathFolder) && count(scandir($pathFolder)) == 2) { // 2 berarti hanya ada '.' dan '..'
-                rmdir($pathFolder);
+            // 2. Hapus folder jika kosong
+            if (is_dir($pathFolder) && count(scandir($pathFolder)) == 2) {
+                @rmdir($pathFolder);
             }
 
-            // 4. Eksekusi Soft Delete di Database
-            // Ini akan mengisi kolom deleted_at secara otomatis jika model dikonfigurasi soft delete
-            $db->table('kegiatan_mahasiswa')
-                ->where('id_kegiatan', $idK)
-                ->update(['deleted_at' => date('Y-m-d H:i:s')]);
+            // 3. Eksekusi Soft Delete
+            // 3. Eksekusi Soft Delete menggunakan Model
+            $model = new \App\Models\KegiatanMahasiswaModel();
+            $result = $model->delete($idK);
 
-            $db->transCommit();
-            return true;
+            if ($result) {
+                return true;
+            }
+
+            $errorMsg = '[SoftDelete] Update affected 0 rows untuk ID ' . $idK;
+            log_message('error', $errorMsg);
+            return $errorMsg;
         } catch (\Exception $e) {
-            $db->transRollback();
-            log_message('error', '[SoftDelete Error] ' . $e->getMessage());
-            return false;
+            $errorMsg = '[SoftDelete Error] ' . $e->getMessage();
+            log_message('error', $errorMsg);
+            return $errorMsg;
         }
     }
 

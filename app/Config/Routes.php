@@ -35,7 +35,7 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
     $routes->post('Pengajuan-Kegiatan/(:any)', 'Pengajuan::add_pengajuan_kegiatan/$1');
 
     $routes->get('edit-jenis-pengajuan/(:any)', 'Pengajuan::edit/$1');
-    $routes->post('Delete-Pengajuan-Kegiatan/(:any)', 'Pengajuan::delete/$1');
+    $routes->post('Delete-Pengajuan-Kegiatan/(:segment)/(:num)', 'Pengajuan::delete/$1/$2');
     $routes->post('Edit-Pengajuan-Kegiatan/(:any)', 'Pengajuan::update_pengajuan/$1');
 
     // PENCARIAN

@@ -79,10 +79,7 @@ class Verifikasi extends BaseController
         if (!$otoritas_aktif) {
             return redirect()->to('/Dashboard')->with('error', 'Akses ditolak.');
         }
-        // 1. Ambil data utama kegiatan JOIN dengan data anggota
-        // Kita gunakan builder untuk fleksibilitas join antar tabel
-        // 1. Ambil data utama kegiatan JOIN dengan data anggota
-        // Kita gunakan function model getDetailPengajuan
+
         $kegiatan = $this->KegiatanMahasiswaModel->getDetailPengajuan($slug, $nim);
         if (!$kegiatan) {
             return redirect()->to('/pengajuan-kegiatan')->with('error', 'Data tidak ditemukan.');
@@ -129,10 +126,20 @@ class Verifikasi extends BaseController
         $kegiatanLama = $this->KegiatanMahasiswaModel->find($id_kegiatan);
         $status_lama = $kegiatanLama['status_pengajuan'];
 
+        if($otoritas_aktif === "KETUA PROGRAM STUDI"){
+            $tipe_kegiatan = $this->request->getPost('tipe_kegiatan');
+            // dd($status_baru);
+            $this->KegiatanMahasiswaModel->update($id_kegiatan, [
+                'tipe_kegiatan' => $tipe_kegiatan,
+                'status_pengajuan' => $status_baru,
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+        } else {
         $this->KegiatanMahasiswaModel->update($id_kegiatan, [
             'status_pengajuan' => $status_baru,
             'updated_at' => date('Y-m-d H:i:s')
         ]);
+        }
 
         $this->LogsModel->insert(
             (object)[

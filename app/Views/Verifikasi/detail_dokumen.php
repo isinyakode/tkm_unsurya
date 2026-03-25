@@ -28,11 +28,14 @@
                             <div class="mb-3">
                                 <label class="text-muted small text-uppercase fw-bold">Nama Kegiatan</label>
                                 <h3 class="fw-bold"><?= $kegiatan['nama_kegiatan']; ?></h3>
-                                    Nama Pengaju : <?= $kegiatan['nama']; ?><br>
-                                    Peran Pengaju : <?= $kegiatan['peran']; ?><br>
-                                    Jenis Kegiatan : <?= $kegiatan['jenis_kegiatan']; ?><br>
-                                    Dibuat pada: <?= date('d M Y H:i', strtotime($kegiatan['created_at'])); ?><br>
-                                    Update terakhir: <?= date('d M Y H:i', strtotime($kegiatan['updated_at'])); ?>
+                                    Nama Pengaju : <b><?= $kegiatan['nama']; ?></b><br>
+                                    <?php if($otoritas === "KABIRO KEMAHASISWAAN"): ?>
+                                        Tipe Kegiatan : <b><?= $kegiatan['tipe_kegiatan']; ?></b><br>
+                                    <?php endif; ?>
+                                    Peran Pengaju : <b><?= $kegiatan['peran']; ?></b><br>
+                                    Jenis Kegiatan : <b><?= $kegiatan['jenis_kegiatan']; ?></b><br>
+                                    Dibuat pada: <b><?= date('d M Y H:i', strtotime($kegiatan['created_at'])); ?></b><br>
+                                    Update terakhir: <b><?= date('d M Y H:i', strtotime($kegiatan['updated_at'])); ?></b>
                                 </small>
                             </div>
                         </div>
@@ -147,6 +150,16 @@
                                 <input type="hidden" name="id_kegiatan" value="<?= $kegiatan['id_kegiatan']; ?>">
 
                                 <?= render_status_verifikasi_select($kegiatan['status_pengajuan'], $otoritas); ?>
+                            <?php if ($otoritas === "KETUA PROGRAM STUDI"): ?>
+                                <div class="form-group p-0 mb-3">
+                                    <label class="fw-bold mb-1">Tipe</label>
+                                    <select name="tipe_kegiatan" class="form-select border-primary" required>
+                                        <option value="" <?= ($status_saat_ini == '' ? 'selected' : '') ?>>-- Pilih Status --</option>
+                                        <option value="Kurikuler" <?= ($status_saat_ini == 'Kurikuler' ? 'selected' : '') ?>>Kurikuler (Culikular)</option>
+                                        <option value="Kokulikuler" <?= ($status_saat_ini == 'Kokulikuler' ? 'selected' : '') ?>>Kokulikuler (Coculikular)</option>
+                                    </select>
+                                </div>
+                                <?php endif; ?>
                                 <div class="form-group p-0 mb-3">
                                     <label class="fw-bold mb-1">Catatan Ke Mahasiswa</label>
                                     <textarea name="catatan" class="form-control border-primary" rows="3" placeholder="Berikan alasan jika ditolak atau perlu revisi..."></textarea>

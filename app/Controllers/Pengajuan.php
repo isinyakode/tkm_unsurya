@@ -153,12 +153,12 @@ class Pengajuan extends BaseController
         }
 
         // 5. Ambil pilihan kategori berdasarkan elemen
-        $tingkat      = $this->JenisKegiatanMahasiswaModel->getTingkatKegiatan($idJenis);
-        $peran        = $this->JenisKegiatanMahasiswaModel->getPeranKegiatan($idJenis);
-        $prestasi     = $this->JenisKegiatanMahasiswaModel->getPrestasiKegiatan($idJenis);
-        $waktu        = $this->JenisKegiatanMahasiswaModel->getWaktuKegiatan($idJenis);
-        $badan_hukum  = $this->JenisKegiatanMahasiswaModel->getBadanHukumKegiatan($idJenis);
-        $omzet        = $this->JenisKegiatanMahasiswaModel->getOmzetKegiatan($idJenis);
+        $tingkat = $this->JenisKegiatanMahasiswaModel->getTingkatKegiatan($idJenis);
+        $peran = $this->JenisKegiatanMahasiswaModel->getPeranKegiatan($idJenis);
+        $prestasi = $this->JenisKegiatanMahasiswaModel->getPrestasiKegiatan($idJenis);
+        $waktu = $this->JenisKegiatanMahasiswaModel->getWaktuKegiatan($idJenis);
+        $badan_hukum = $this->JenisKegiatanMahasiswaModel->getBadanHukumKegiatan($idJenis);
+        $omzet = $this->JenisKegiatanMahasiswaModel->getOmzetKegiatan($idJenis);
         $jenis_kategori = $this->JenisKegiatanMahasiswaModel->getJenisKegiatan($idJenis);
         $media_sosial = $this->JenisKegiatanMahasiswaModel->getMedsosKegiatan($idJenis);
 
@@ -168,24 +168,24 @@ class Pengajuan extends BaseController
 
         // 7. Kirim ke view
         $data = array_merge([
-            'title'            => "Update Formulir " . ($namaJenis ?? ''),
-            'kegiatan'         => $kegiatan,
-            'elemenAktif'      => $elemenAktif,
-            'selectedValues'   => $selectedValues,
+            'title' => "Update Formulir " . ($namaJenis ?? ''),
+            'kegiatan' => $kegiatan,
+            'elemenAktif' => $elemenAktif,
+            'selectedValues' => $selectedValues,
 
             // kategori untuk dropdown
-            'tingkat'           => $tingkat,
-            'peran'             => $peran,
-            'prestasi'          => $prestasi,
-            'waktu'             => $waktu,
-            'badan_hukum'       => $badan_hukum,
-            'omzet'             => $omzet,
-            'jenis'             => $jenis_kategori,
-            'media_sosial'      => $media_sosial,
+            'tingkat' => $tingkat,
+            'peran' => $peran,
+            'prestasi' => $prestasi,
+            'waktu' => $waktu,
+            'badan_hukum' => $badan_hukum,
+            'omzet' => $omzet,
+            'jenis' => $jenis_kategori,
+            'media_sosial' => $media_sosial,
 
             // anggota
-            'anggota_lama'     => $anggotaLama,
-            'anggotaJson'      => $anggotaJson,
+            'anggota_lama' => $anggotaLama,
+            'anggotaJson' => $anggotaJson,
 
             'logs' => $this->LogsModel->getLogs($idK),
         ], get_jenis_kegiatan_config($jenis_kegiatan));
@@ -244,16 +244,32 @@ class Pengajuan extends BaseController
             : redirect()->back()->withInput()->with('error', 'Gagal memperbarui data. Periksa log error.');
     }
 
-    public function delete($slug = null)
+    public function delete($slug = null, $nim = null)
     {
-        $kegiatan = $this->KegiatanMahasiswaModel->getBySlug($slug);
-        $success = $this->ActivityService->softDeleteActivity($kegiatan['id_kegiatan']);
+        $kegiatan = $this->KegiatanMahasiswaModel->getBySlug($slug, $nim);
 
-        if ($success) {
+        if (!$kegiatan) {
+            if ($this->request->isAJAX()) {
+                return $this->response->setJSON(['status' => false, 'message' => 'Data kegiatan tidak ditemukan.']);
+            }
+            return redirect()->back()->with('error', 'Data kegiatan tidak ditemukan.');
+        }
+
+        $success = $this->ActivityService->softDeleteActivity($kegiatan);
+        if ($this->request->isAJAX()) {
+            $isSuccess = $success === true;
+            return $this->response->setJSON([
+                'slug' => $kegiatan['slug_kegiatan_mahasiswa'],
+                'id_kegiatan' => $kegiatan['id_kegiatan'],
+                'nim' => $nim,
+                'status' => $isSuccess,
+                'message' => $isSuccess ? 'Pengajuan berhasil dihapus.' : (is_string($success) ? $success : 'Gagal menghapus data.'),
+            ]);
+        }
+
+        if ($success === true) {
             return redirect()->to('/pengajuan-kegiatan')->with('success', 'Pengajuan berhasil dihapus dan file telah dibersihkan.');
         }
-        else {
-            return redirect()->back()->with('error', 'Gagal menghapus data.');
-        }
+        return redirect()->back()->with('error', 'Gagal menghapus data.');
     }
 }

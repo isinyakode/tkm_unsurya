@@ -172,7 +172,7 @@
                                                 <a href="<?= base_url('edit-jenis-pengajuan/' . $k['slug_kegiatan_mahasiswa']) ?>" class="btn btn-warning btn-sm btn-round" title="Edit">
                                                     <i class="fas fa-fw fa-pen"></i>
                                                 </a>
-                                                <button class="btn btn-danger btn-md btn-round btn-delete-kegiatan" data-slug="<?= esc($k['slug_kegiatan_mahasiswa'] ?? $k['slug_kegiatan_mahasiswa'] ?? '') ?>">
+                                                <button class="btn btn-danger btn-md btn-round btn-delete-kegiatan" data-nim="<?= esc($k['nim_pengaju'] ?? $k['nim'] ?? '') ?>" data-slug="<?= esc($k['slug_kegiatan_mahasiswa'] ?? '') ?>">
                                                     <i class="fas fa-fw fa-trash"></i>
                                                 </button>
                                             <?php endif; ?>
