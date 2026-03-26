@@ -7,12 +7,13 @@
 .DS_Store
 .AppleDouble
 .LSOverride
-
+x.txt
 # OS X Thumbnails
 ._*
 
 # Windows image file caches
 Thumbs.db
+
 ehthumbs.db
 Desktop.ini
 
