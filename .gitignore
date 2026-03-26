@@ -41,10 +41,12 @@ $RECYCLE.BIN/
 #-------------------------
 # These should never be under version control,
 # as it poses a security risk.
-public
+debug.html
+fix_views.php
 .env
 .vagrant
 Vagrantfile
+public/assets/uploads/tkm/*
 
 #-------------------------
 # Temporary Files
