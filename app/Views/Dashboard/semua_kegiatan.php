@@ -1,5 +1,6 @@
-<?= $this->extend('Layout/index'); ?>
-<?= $this->section('Dashboard'); ?>
+<?php /** @var \CodeIgniter\View\View $this */ ?>
+<?php $this->extend('Layout/index'); ?>
+<?php $this->section('Dashboard'); ?>
 <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
     <div>
         <h3 class="fw-bold mb-3"><?= esc($title); ?></h3>
@@ -63,4 +64,4 @@
     window.FLASH_ERROR = <?= json_encode(session()->getFlashdata('error') ?: null) ?>;
 </script>
 <script src="<?= base_url('/assets/js/kepanitiaan.js') ?>"></script>
-<?= $this->endSection() ?>
+<?php $this->endSection() ?>

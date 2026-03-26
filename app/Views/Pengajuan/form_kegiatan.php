@@ -1,3 +1,4 @@
+<?php /** @var \CodeIgniter\View\View $this */ ?>
 <?php
 /**
  * @var \CodeIgniter\View\View $this

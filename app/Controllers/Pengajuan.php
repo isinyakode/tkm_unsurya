@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
-// use App\Models\JenisElemenModel;
+
 use App\Models\JenisKegiatanMahasiswaModel;
 use App\Models\ElemenPenilaianModel;
 use App\Models\KategoriKegiatanModel;
@@ -18,7 +18,7 @@ use CodeIgniter\Exceptions\PageNotFoundException;
 class Pengajuan extends BaseController
 {
     protected $ActivityService;
-    // protected $JenisElemenModel;
+
     protected $JenisKegiatanMahasiswaModel;
     protected $ElemenPenilaianModel;
     protected $KategoriKegiatanMahasiswaModel;
@@ -33,7 +33,7 @@ class Pengajuan extends BaseController
     public function __construct()
     {
         $this->ActivityService = new ActivityService();
-        // $this->JenisElemenModel   = new JenisElemenModel();
+
         $this->JenisKegiatanMahasiswaModel = new JenisKegiatanMahasiswaModel();
         $this->ElemenPenilaianModel = new ElemenPenilaianModel();
         $this->KategoriKegiatanMahasiswaModel = new KategoriKegiatanModel();
@@ -52,10 +52,9 @@ class Pengajuan extends BaseController
         if (!$jenis_kegiatan) {
             throw PageNotFoundException::forPageNotFound('Jenis kegiatan tidak ditemukan.');
         }
-        // dd($jenis_kegiatan['id_jenis_kegiatan']);
+
         $namaJenis = $jenis_kegiatan['jenis_kegiatan'];
         $slugJenis = $jenis_kegiatan['slug_jenis_kegiatan'];
-        // dd($slugJenis);
         $data = array_merge([
             'title' => "Formulir",
             'jenis_kegiatan' => $namaJenis,
@@ -70,14 +69,13 @@ class Pengajuan extends BaseController
             'jenis' => $this->JenisKegiatanMahasiswaModel->getJenisKegiatan($jenis_kegiatan['id_jenis_kegiatan']),
             'media_sosial' => $this->JenisKegiatanMahasiswaModel->getMedsosKegiatan($jenis_kegiatan['id_jenis_kegiatan']),
         ], get_jenis_kegiatan_config($jenis_kegiatan));
-        // dd($data['jenis']);
         return view('Pengajuan/form_kegiatan', $data);
     }
 
     public function add_pengajuan_kegiatan($slug)
     {
         $db = \Config\Database::connect();
-        // $idJenis = $this->request->getPost('id_jenis_kegiatan');
+
 
         $setup = $this->JenisKegiatanMahasiswaModel->getslug($slug);
         if (!$setup)
@@ -92,15 +90,12 @@ class Pengajuan extends BaseController
         ];
 
         // 2. Validasi Dinamis (Jika bukan PKKMB)
-        // 2. Validasi Dinamis (Jika bukan PKKMB)
         $rules = array_merge($rules, get_dynamic_validation_rules($setup, $setup['id_jenis_kegiatan']));
-        // dd($rules);
         if (!$this->validate($rules)) {
             return redirect()->back()->withInput()->with('error', $this->validator->getErrors());
         }
 
-        // // 3. Eksekusi
-        // dd($this->request->getPost());
+        // 3. Eksekusi
         $success = $this->ActivityService->submitActivity(
             $setup['id_jenis_kegiatan'],
             $this->request->getPost(),
@@ -244,32 +239,35 @@ class Pengajuan extends BaseController
             : redirect()->back()->withInput()->with('error', 'Gagal memperbarui data. Periksa log error.');
     }
 
-    public function delete($slug = null, $nim = null)
+   public function delete($slug = null, $nim = null)
     {
         $kegiatan = $this->KegiatanMahasiswaModel->getBySlug($slug, $nim);
 
         if (!$kegiatan) {
             if ($this->request->isAJAX()) {
-                return $this->response->setJSON(['status' => false, 'message' => 'Data kegiatan tidak ditemukan.']);
+                return $this->response->setJSON([
+                    'status' => false,
+                    'message' => 'Data kegiatan tidak ditemukan.'
+                ]);
             }
+
             return redirect()->back()->with('error', 'Data kegiatan tidak ditemukan.');
         }
 
-        $success = $this->ActivityService->softDeleteActivity($kegiatan);
+        $success = $this->KegiatanMahasiswaModel->delete($kegiatan['id_kegiatan']);
+
         if ($this->request->isAJAX()) {
-            $isSuccess = $success === true;
             return $this->response->setJSON([
-                'slug' => $kegiatan['slug_kegiatan_mahasiswa'],
+                'slug'        => $kegiatan['slug_kegiatan_mahasiswa'],
                 'id_kegiatan' => $kegiatan['id_kegiatan'],
-                'nim' => $nim,
-                'status' => $isSuccess,
-                'message' => $isSuccess ? 'Pengajuan berhasil dihapus.' : (is_string($success) ? $success : 'Gagal menghapus data.'),
+                'nim'         => $nim,
+                'status'      => (bool) $success,
+                'message'     => $success ? 'Pengajuan berhasil dihapus.' : 'Gagal menghapus data.',
             ]);
         }
 
-        if ($success === true) {
-            return redirect()->to('/pengajuan-kegiatan')->with('success', 'Pengajuan berhasil dihapus dan file telah dibersihkan.');
-        }
-        return redirect()->back()->with('error', 'Gagal menghapus data.');
+        return $success
+            ? redirect()->to('/pengajuan-kegiatan')->with('success', 'Pengajuan berhasil dihapus.')
+            : redirect()->back()->with('error', 'Gagal menghapus data.');
     }
 }

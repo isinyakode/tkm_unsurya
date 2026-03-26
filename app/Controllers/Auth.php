@@ -27,11 +27,9 @@ class Auth extends BaseController
         $password = $this->request->getPost('password');
 
         $loginData = $this->ssoService->loginSso($username, $password);
-        // dd($loginData);
         if ($loginData) {
             // Ambil info detail mahasiswa dari dalam JWT access_token
             $profile = $this->ssoService->decodeToken($loginData['access_token']);
-            // dd($profile);
             if ($profile) {
                 $sessionData = [
                     'isLoggedIn'    => true,

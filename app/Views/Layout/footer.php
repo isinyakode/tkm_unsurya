@@ -1,3 +1,4 @@
+<?php /** @var \CodeIgniter\View\View $this */ ?>
 <footer class="footer">
     <div class="container-fluid">
         <div class="copyright ms-auto">

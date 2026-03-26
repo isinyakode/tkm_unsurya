@@ -24,11 +24,7 @@ class Dashboard extends BaseController
 
         $all_kegiatan = $this->KegiatanMahasiswaModel->getKegiatan($nim);
         
-        // if (is_warek()|| is_kabiro()) {
-        // $all_kegiatan_disetujui = $this->KegiatanMahasiswaModel->getKegiatan($nim, 'Diverifikasi');
-        // } elseif (is_kabag()) {
         $all_kegiatan_disetujui = $this->KegiatanMahasiswaModel->getKegiatan($nim, 'Diajukan');
-        // } 
 
         $score_kegiatan = countscorekegiatan($all_kegiatan_disetujui);
         $total_kegiatan = counttotalkegiatan($all_kegiatan);

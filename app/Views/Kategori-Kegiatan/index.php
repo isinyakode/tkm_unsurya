@@ -1,5 +1,6 @@
-<?= $this->extend('Layout/index'); ?>
-<?= $this->section('Dashboard'); ?>
+<?php /** @var \CodeIgniter\View\View $this */ ?>
+<?php $this->extend('Layout/index'); ?>
+<?php $this->section('Dashboard'); ?>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -120,4 +121,4 @@
 
 <script src="<?= base_url('/assets/js/crud_pimpinan.js') ?>"></script>
 
-<?= $this->endSection(); ?>
+<?php $this->endSection(); ?>

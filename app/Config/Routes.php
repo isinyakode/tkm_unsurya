@@ -14,9 +14,7 @@ $routes->get('logout', 'Auth::logout');
 // Route khusus RUM
 $routes->post('cdn-cgi/rum', 'Auth::cdn_rum');
 
-// Contoh Group Dashboard yang diproteksi
-// $routes->group('dashboard', ['filter' => 'auth'], function ($routes) {
-//     });
+
 
 // DASHBOARD
 $routes->group('', ['filter' => 'auth'], function ($routes) {

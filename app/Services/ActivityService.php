@@ -25,7 +25,7 @@ class ActivityService
         $this->LogsModel   = new LogsModel();
     }
 
-    // ================ BARU =========================
+
     public function submitActivity($idJenis, array $formData, $file)
     {
         $data_mhs = [
@@ -86,73 +86,7 @@ class ActivityService
         return $newName;
     }
 
-    // private function calculateAndSaveScores($idKegiatan, $idJenis, $formData)
-    // {
-    //     $res = [
-    //         'shared_score' => 0,
-    //         'peran_ketua'  => ['nama_peran' => 'Ketua', 'kredit_score' => 0]
-    //     ];
 
-    //     $semuaElemen = $this->db->table('elemen_penilaian')->get()->getResultArray();
-    //     $dataPenilaianBatch = []; // Array penampung untuk insertBatch
-
-    //     foreach ($semuaElemen as $elemen) {
-    //         $key = $elemen['request_key'];
-    //         $idKategori = $formData[$key] ?? null;
-
-    //         if ($idKategori) {
-    //             $dataPenilaian = $this->db->table('kredit_penilaian kp')
-    //                 ->select('kp.kredit_score, ep.nama_elemen_penilaian')
-    //                 ->join('elemen_penilaian ep', 'ep.id_elemen_penilaian = kp.id_elemen_penilaian')
-    //                 ->where([
-    //                     'kp.id_jenis_kegiatan'    => $idJenis,
-    //                     'kp.id_kategori_kegiatan' => $idKategori,
-    //                     'kp.id_elemen_penilaian'  => $elemen['id_elemen_penilaian']
-    //                 ])
-    //                 ->get()->getResultArray();
-    //             // dd($dataPenilaian);
-    //             foreach ($dataPenilaian as $row) {
-    //                 // if ($row['nama_elemen_penilaian'] !== 'Peran') {
-    //                 $res['shared_score'] += (float)$row['kredit_score'];
-
-    //                 // Siapkan data untuk batch
-    //                 $dataPenilaianBatch[] = [
-    //                     'id_kegiatan'      => $idKegiatan,
-    //                     'elemen_penilaian' => $row['nama_elemen_penilaian'],
-    //                     'kredit_score'     => (float)$row['kredit_score'],
-    //                     'created_at'       => date('Y-m-d H:i:s'),
-    //                     'updated_at'       => date('Y-m-d H:i:s')
-    //                 ];
-    //                 // }
-    //             }
-    //         }
-    //     }
-
-    //     // Eksekusi insertBatch jika ada data yang terkumpul
-    //     if (!empty($dataPenilaianBatch)) {
-    //         $this->db->table('kegiatan_mahasiswa_penilaian')->insertBatch($dataPenilaianBatch);
-    //     }
-
-    //     // 2. Ambil Skor Peran (Ketua/Peserta)
-    //     $peranKategori = ($idJenis == 1) ? 'Peserta' : 'Ketua';
-    //     $dataPeran = $this->db->table('kredit_penilaian kp')
-    //         ->join('kategori_kegiatan kk', 'kp.id_kategori_kegiatan = kk.id_kategori_kegiatan')
-    //         ->join('elemen_penilaian ep', 'ep.id_elemen_penilaian = kp.id_elemen_penilaian')
-    //         ->where([
-    //             'kp.id_jenis_kegiatan'      => $idJenis,
-    //             'ep.nama_elemen_penilaian'  => 'Peran',
-    //             'kk.nama_kategori_kegiatan' => $peranKategori
-    //         ])->get()->getRow();
-
-    //     if ($dataPeran) {
-    //         $res['peran_ketua']['nama_peran']   = $dataPeran->nama_kategori_kegiatan;
-    //         $res['peran_ketua']['kredit_score'] = (float)$dataPeran->kredit_score;
-    //     }
-
-    //     return $res;
-    // }
-
-    // BARU
     private function calculateAndSaveScores($idKegiatan, $idJenis, $formData)
     {
         $res = [
@@ -292,86 +226,7 @@ class ActivityService
         }
     }
 
-    // private function insertPenilaianRecord($idK, $idA, $data)
-    // {
-    //     if (!$data) return;
-    //     $this->penilaianModel->insert([
-    //         'id_kegiatan'          => $idK,
-    //         'id_anggota'           => $idA,
-    //         'id_elemen_penilaian'  => $data['id_elemen_penilaian'],
-    //         'id_kategori_kegiatan' => $data['id_kategori_kegiatan'],
-    //         'kredit_score'         => $data['kredit_score']
-    //     ]);
-    // }
-    // ================ BARU =========================
 
-    // UPDATE
-    // public function updateActivity($id_kegiatan, $data, $fileLaporan = null)
-    // {
-    //     $kegiatanLama = $this->kegiatanModel->where('id_kegiatan', $id_kegiatan)->first();
-    //     if (!$kegiatanLama) return ['status' => false, 'message' => 'Data tidak ditemukan.'];
-
-    //     $this->db->transStart();
-    //     try {
-    //         // 1. Handle File
-    //         $namaFileSimpan = $kegiatanLama['file_laporan'];
-    //         if ($fileLaporan && $fileLaporan->isValid() && !$fileLaporan->hasMoved()) {
-    //             $namaFileSimpan = $fileLaporan->getRandomName();
-    //             $dirPath = 'uploads/tkm/' . $kegiatanLama['nim_pengaju'] . '/' . $kegiatanLama['slug_kegiatan_mahasiswa'];
-
-    //             if (!is_dir($dirPath)) mkdir($dirPath, 0777, true);
-    //             $fileLaporan->move($dirPath, $namaFileSimpan);
-
-    //             if (!empty($kegiatanLama['file_laporan']) && file_exists($dirPath . '/' . $kegiatanLama['file_laporan'])) {
-    //                 @unlink($dirPath . '/' . $kegiatanLama['file_laporan']);
-    //             }
-    //         }
-
-    //         // 2. Update Tabel Utama
-    //         $this->kegiatanModel->update($id_kegiatan, [
-    //             'nama_kegiatan'      => $data['nama_kegiatan'],
-    //             'tanggal_mulai'      => $data['tanggal_mulai'],
-    //             'tanggal_selesai'    => $data['tanggal_selesai'],
-    //             'deskripsi_kegiatan' => $data['deskripsi_kegiatan'],
-    //             'lokasi_kegiatan'    => $data['lokasi_kegiatan'],
-    //             'file_laporan'       => $namaFileSimpan,
-    //             'status_pengajuan'   => 'Diajukan',
-    //             'updated_at'         => date('Y-m-d H:i:s')
-    //         ]);
-
-    //         // 3. NORMALISASI PENILAIAN (Tingkat)
-    //         $this->db->table('kegiatan_mahasiswa_penilaian')->where('id_kegiatan', $id_kegiatan)->delete();
-    //         $scoreSummary = $this->calculateAndSaveScores($id_kegiatan, $kegiatanLama['id_jenis_kegiatan'], $data);
-
-    //         // 4. SINKRONISASI ANGGOTA
-    //         // Hapus anggota lama (Direct Delete karena deleted_at sudah dihapus)
-    //         $this->db->table('kegiatan_mahasiswa_anggota')->where('id_kegiatan', $id_kegiatan)->delete();
-
-    //         $data_mhs = [
-    //             'nim'           => session()->get('nim'),
-    //             'tempat_lahir'  => session()->get('namakotalahir'),
-    //             'tanggal_lahir' => session()->get('tgllahir'),
-    //             'nama'          => session()->get('nama'),
-    //             'fakultas'      => session()->get('fakultas'),
-    //             'prodi'         => session()->get('prodi'),
-    //             'jenjang'       => session()->get('jenjang'),
-    //             'semester'      => session()->get('semester'),
-    //         ];
-
-    //         $this->saveMembersBatch($id_kegiatan, $kegiatanLama['id_jenis_kegiatan'], $data, $scoreSummary, $data_mhs);
-
-    //         // 5. Simpan Log
-    //         $this->SaveLogs($id_kegiatan, "Revisi", 'Diajukan', session()->get('nama'));
-
-    //         $this->db->transComplete();
-    //         return ['status' => true];
-    //     } catch (\Exception $e) {
-    //         $this->db->transRollback();
-    //         return ['status' => false, 'message' => $e->getMessage()];
-    //     }
-    // }
-    
-    // BARU
     public function updateActivity($id_kegiatan, $data, $fileLaporan = null)
     {
         // 1. Ambil data lama untuk referensi NIM, Slug, dan Jenis Kegiatan
@@ -479,10 +334,8 @@ class ActivityService
                 @rmdir($pathFolder);
             }
 
-            // 3. Eksekusi Soft Delete
-            // 3. Eksekusi Soft Delete menggunakan Model
-            $model = new \App\Models\KegiatanMahasiswaModel();
-            $result = $model->delete($idK);
+            // 3. Eksekusi Delete
+            $result = $this->kegiatanModel->delete($idK);
 
             if ($result) {
                 return true;

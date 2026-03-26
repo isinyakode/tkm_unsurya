@@ -69,9 +69,7 @@ class Verifikasi extends BaseController
 
     public function detail_dokumen($slug, $nim)
     {
-        helper(['cetak_helper', 'status_badge_helper']);
-        // $otoritas = session()->get('otoritas') ?? 'KABIRO KEMAHASISWAAN';
-        helper(['auth_helper', 'auth']);
+        helper(['cetak_helper', 'status_badge_helper', 'auth_helper', 'auth']);
 
         $otoritas_aktif = "";
 

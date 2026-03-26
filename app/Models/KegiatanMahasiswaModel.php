@@ -11,6 +11,7 @@ class KegiatanMahasiswaModel extends Model
 
     protected $returnType = 'array';
     protected $useSoftDeletes = false;
+    protected $deletedField   = 'deleted_at';
 
     protected $allowedFields = [
         'tipe_kegiatan',
@@ -40,9 +41,14 @@ class KegiatanMahasiswaModel extends Model
             ->get()->getRowArray();
     }
 
-    public function getBySlug(string $slug, string $nim = null): ?array
+    public function getBySlug(string $slug, ?string $nim = null): ?array
     {
-        $builder = $this->where(['slug_kegiatan_mahasiswa' => $slug, 'nim_pengaju' => $nim]);
+        $builder = $this->where('slug_kegiatan_mahasiswa', $slug);
+
+        if (!empty($nim)) {
+            $builder->where('nim_pengaju', $nim);
+        }
+
         return $builder->first();
     }
 
@@ -54,7 +60,7 @@ class KegiatanMahasiswaModel extends Model
             ->join('kegiatan_mahasiswa_anggota kma', 'kma.id_kegiatan = km.id_kegiatan')
             ->where('kma.nim', $nim_pengaju)
             ->where('km.deleted_at', null)
-            // ->where('km.status_pengajuan', 'Selesai')
+
             ->orderBy('kma.semester', 'ASC')
             ->get()
             ->getResultArray();

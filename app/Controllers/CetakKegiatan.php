@@ -36,14 +36,6 @@ class CetakKegiatan extends BaseController
         $all_kegiatan = $this->KegiatanMahasiswaModel
             ->getallKegiatanApprove($this->session->get('nim'));
 
-        // $kumulatif_poin = countscorekegiatan($all_kegiatan);
-        // // dd($kumulatif_poin);
-        // // dd(session()->get('jenjang'));
-        // $jenjang = check_jenjang(session()->get('jenjang'), $kumulatif_poin);
-        // // dd($jenjang);
-        // if (!$jenjang) {
-        //     return redirect()->to('/Dashboard')->with('error', 'Point kamu belum cukup untuk di cetak!');
-        // }
         // Data Dummy Mahasiswa
         $mhs = $this->KegiatanAnggotaModel->getByNim($this->session->get('nim'));
 if (!$mhs) {
@@ -147,7 +139,6 @@ if (!$mhs) {
         }
 
         // Skor & Predikat [cite: 9, 10]
-        // dd($mhs['jenjang']);
         $hasil_predikat = hitung_predikat_tkm(session()->get('jenjang'), $total_kredit);
         $pdf->Ln(5);
         $pdf->SetFont('times', 'B', 10);
@@ -190,14 +181,6 @@ if (!$mhs) {
         $this->tambahTabelDetail($pdf, $allKegiatan);
 
         // ============================================================
-        // BAGIAN 4: PENGGABUNGAN FILE FISIK (EVIDENCE)
-        // ============================================================
-        // foreach ($allKegiatan as $k) {
-        //     $pathFile = FCPATH . 'uploads/tkm/' . $mhs['nim'] . '/' . $k['slug_kegiatan_mahasiswa'] . '/' . $k['file_laporan'];
-        //     if (!empty($k['file_laporan']) && file_exists($pathFile)) {
-        //         $this->mergePDFFile($pdf, $pathFile);
-        //     }
-        // }
 
         return $this->response->setHeader('Content-Type', 'application/pdf')
             ->setBody($pdf->Output('Transkrip_Lengkap_' . $mhs['nim'] . '.pdf', 'S'));
@@ -313,7 +296,6 @@ if (!$mhs) {
     public function cetak_semua_kegiatan()
     {
         helper(['auth_helper', 'auth']);
-        // dd(is_warek());
         if (is_warek() == false && is_kabiro() == false && is_kabag() == false) {
             return redirect()->to('/Dashboard')->with('error', 'Akses ditolak.');
         }

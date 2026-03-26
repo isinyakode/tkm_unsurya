@@ -1,3 +1,4 @@
+<?php /** @var \CodeIgniter\View\View $this */ ?>
 <!-- Error Notification -->
 <?php if (session()->getFlashdata('errors')) : ?>
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
