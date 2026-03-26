@@ -1,0 +1,44 @@
+﻿Field	Type	Null	Key	Default	Extra
+id_kegiatan	int(11)	NO	PRI	NULL	auto_increment
+id_jenis_kegiatan	int(128)	NO	MUL	NULL	
+tipe_kegiatan	enum('Kurikuler','Kokulikuler')	YES		NULL	
+nim_pengaju	varchar(20)	NO	MUL	NULL	
+jenis_kegiatan	varchar(128)	NO	MUL	NULL	
+slug_kegiatan_mahasiswa	varchar(255)	NO		NULL	
+nama_kegiatan	varchar(255)	NO		NULL	
+tanggal_mulai	date	YES	MUL	NULL	
+tanggal_selesai	date	YES		NULL	
+deskripsi_kegiatan	text	YES		NULL	
+lokasi_kegiatan	varchar(255)	YES		NULL	
+file_laporan	varchar(255)	YES		NULL	
+status_pengajuan	enum('Diajukan','Disetujui','Ditolak','Revisi','Diverifikasi','Ditinjau')	NO		Diajukan	
+qr_code	text	YES		NULL	
+created_at	datetime	NO		current_timestamp()	
+updated_at	datetime	NO		current_timestamp()	on update current_timestamp()
+deleted_at	datetime	YES		NULL	
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+kegiatan_mahasiswa	0	PRIMARY	1	id_kegiatan	A	658	NULL	NULL		BTREE		
+kegiatan_mahasiswa	1	jenis_kegiatan	1	jenis_kegiatan	A	31	NULL	NULL		BTREE		
+kegiatan_mahasiswa	1	id_jenis_kegiatan	1	id_jenis_kegiatan	A	31	NULL	NULL		BTREE		
+kegiatan_mahasiswa	1	idx_km_nim	1	nim_pengaju	A	329	NULL	NULL		BTREE		
+kegiatan_mahasiswa	1	idx_km_tanggal	1	tanggal_mulai	A	658	NULL	NULL	YES	BTREE		
+Field	Type	Null	Key	Default	Extra
+id_anggota	int(11)	NO	PRI	NULL	auto_increment
+id_kegiatan	int(11)	NO	MUL	NULL	
+peran	varchar(255)	YES		NULL	
+nim	varchar(20)	NO	MUL	NULL	
+tempat_lahir	varchar(128)	YES		NULL	
+tanggal_lahir	date	YES		NULL	
+nama	varchar(150)	NO		NULL	
+fakultas	varchar(100)	YES		NULL	
+prodi	varchar(150)	YES		NULL	
+jenjang	varchar(255)	NO		NULL	
+semester	varchar(10)	YES		NULL	
+kredit_score	decimal(5,1)	NO		NULL	
+total_kredit	decimal(5,1)	NO		NULL	
+created_at	datetime	NO		current_timestamp()	
+updated_at	datetime	NO		current_timestamp()	on update current_timestamp()
+Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
+kegiatan_mahasiswa_anggota	0	PRIMARY	1	id_anggota	A	735	NULL	NULL		BTREE		
+kegiatan_mahasiswa_anggota	1	idx_kma_kegiatan	1	id_kegiatan	A	735	NULL	NULL		BTREE		
+kegiatan_mahasiswa_anggota	1	idx_kma_nim	1	nim	A	367	NULL	NULL		BTREE		

@@ -40,6 +40,7 @@ $routes->group('', ['filter' => 'auth'], function ($routes) {
     $routes->get('carimhs', 'Search::getMahasiswa');
 
     // CETAK
+    $routes->get('Cetak-SKPI', 'CetakKegiatan::cetak_skpi'); // atau method DELETE kalau mau RESTful
     $routes->get('Cetak-Kegiatan', 'CetakKegiatan::cetak_dan_merge'); // atau method DELETE kalau mau RESTful
     $routes->post('Cetak-Semua-Kegiatan', 'CetakKegiatan::cetak_semua_kegiatan'); // atau method DELETE kalau mau RESTful
 

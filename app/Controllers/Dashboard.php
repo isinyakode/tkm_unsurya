@@ -136,9 +136,7 @@ class Dashboard extends BaseController
 
     public function riwayat_mahasiswa($nim)
     {
-        // $all_kegiatan = $this->KegiatanMahasiswaModel->getallKegiatanApprove($nim);
         $all_kegiatan = $this->KegiatanMahasiswaModel->getKegiatan($nim);
-        // dd($all_kegiatan);
         $mhs = [
             'nim' => $all_kegiatan[0]['nim'],
             'nama' => $all_kegiatan[0]['nama'],
@@ -161,9 +159,7 @@ class Dashboard extends BaseController
     
     public function detail_point_mahasiswa($nim)
     {
-        // $all_kegiatan = $this->KegiatanMahasiswaModel->getallKegiatanApprove($nim);
         $all_kegiatan = $this->KegiatanMahasiswaModel->getallKegiatanApprove($nim);
-        // dd($all_kegiatan);
         $mhs = [
             'nim' => $all_kegiatan[0]['nim'],
             'nama' => $all_kegiatan[0]['nama'],

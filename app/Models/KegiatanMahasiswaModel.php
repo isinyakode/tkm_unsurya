@@ -169,29 +169,36 @@ class KegiatanMahasiswaModel extends Model
     // PIMPINAN DASHBOARD CHART DATA
     public function chartdata()
     {
-        return $this->table('kegiatan_mahasiswa')
+        if ($cached = cache('chart_data_all')) return $cached;
+        $data = $this->table('kegiatan_mahasiswa')
             ->select('id_jenis_kegiatan')
             ->select("SUM(CASE WHEN MONTH(created_at) IN (9,10,11,12,1,2) THEN 1 ELSE 0 END) as ganjil")
             ->select("SUM(CASE WHEN MONTH(created_at) NOT IN (9,10,11,12,1,2) THEN 1 ELSE 0 END) as genap")
             ->where('deleted_at', null)
             ->groupBy('id_jenis_kegiatan')
             ->get()->getResultArray();
+        cache()->save('chart_data_all', $data, 3600);
+        return $data;
     }
 
     public function chartmouthlydata()
     {
-        return $this->table('kegiatan_mahasiswa')
+        if ($cached = cache('chart_monthly_data')) return $cached;
+        $data = $this->table('kegiatan_mahasiswa')
             ->select("MONTH(created_at) as bulan, status_pengajuan, COUNT(*) as total")
             ->where('deleted_at', null)
             ->groupBy("MONTH(created_at), status_pengajuan")
             ->orderBy("MONTH(created_at)", "ASC")
             ->get()
             ->getResultArray();
+        cache()->save('chart_monthly_data', $data, 3600);
+        return $data;
     }
 
     public function chartfakultas()
     {
-        return $this->table('kegiatan_mahasiswa')
+        if ($cached = cache('chart_fakultas_data')) return $cached;
+        $data = $this->table('kegiatan_mahasiswa')
             ->select('kma.fakultas')
             ->select("COUNT(CASE WHEN MONTH(kegiatan_mahasiswa.created_at) IN (9,10,11,12,1,2) THEN kegiatan_mahasiswa.id_kegiatan END) as total_ganjil")
             ->select("COUNT(CASE WHEN MONTH(kegiatan_mahasiswa.created_at) IN (3,4,5,6,7,8) THEN kegiatan_mahasiswa.id_kegiatan END) as total_genap")
@@ -200,11 +207,14 @@ class KegiatanMahasiswaModel extends Model
             ->where('kegiatan_mahasiswa.deleted_at', null)
             ->groupBy('kma.fakultas')
             ->get()->getResultArray();
+        cache()->save('chart_fakultas_data', $data, 3600);
+        return $data;
     }
 
     public function chartprodi()
     {
-        return $this->table('kegiatan_mahasiswa')
+        if ($cached = cache('chart_prodi_data')) return $cached;
+        $data = $this->table('kegiatan_mahasiswa')
             ->select('kma.prodi')
             ->select("COUNT(CASE WHEN MONTH(kegiatan_mahasiswa.created_at) IN (9,10,11,12,1,2) THEN kegiatan_mahasiswa.id_kegiatan END) as total_ganjil")
             ->select("COUNT(CASE WHEN MONTH(kegiatan_mahasiswa.created_at) IN (3,4,5,6,7,8) THEN kegiatan_mahasiswa.id_kegiatan END) as total_genap")
@@ -213,12 +223,16 @@ class KegiatanMahasiswaModel extends Model
             ->where('kegiatan_mahasiswa.deleted_at', null)
             ->groupBy('kma.prodi')
             ->get()->getResultArray();
+        cache()->save('chart_prodi_data', $data, 3600);
+        return $data;
     }
 
     public function getPointMahasiswa($nim = null)
     {
         if ($nim) {
-            return $this->db->table('kegiatan_mahasiswa_anggota kma')
+            $cacheKey = 'leaderboard_nim_'.$nim;
+            if ($cached = cache($cacheKey)) return $cached;
+            $data = $this->db->table('kegiatan_mahasiswa_anggota kma')
                 ->select('kma.*, km.*')
                 ->select('SUM(kma.total_kredit) as total_point')
                 ->join('kegiatan_mahasiswa km', 'km.id_kegiatan = kma.id_kegiatan')
@@ -229,8 +243,11 @@ class KegiatanMahasiswaModel extends Model
                 ->orderBy('total_point', 'DESC')
                 ->limit(10)
                 ->get()->getResultArray();
+            cache()->save($cacheKey, $data, 3600);
+            return $data;
         }
-        return $this->db->table('kegiatan_mahasiswa_anggota kma')
+        if ($cached = cache('leaderboard_all')) return $cached;
+        $data = $this->db->table('kegiatan_mahasiswa_anggota kma')
             ->select('kma.nim, kma.nama, kma.prodi, kma.fakultas')
             ->select('SUM(kma.total_kredit) as total_point')
             ->join('kegiatan_mahasiswa km', 'km.id_kegiatan = kma.id_kegiatan')
@@ -240,5 +257,7 @@ class KegiatanMahasiswaModel extends Model
             ->orderBy('total_point', 'DESC')
             ->limit(10)
             ->get()->getResultArray();
+        cache()->save('leaderboard_all', $data, 3600);
+        return $data;
     }
 }
