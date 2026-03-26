@@ -4,7 +4,7 @@
 
 <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
     <div>
-        <h3 class="fw-bold mb-3"><?= esc($title) . " : " . esc($nama_kegiatan); ?></h3>
+        <h3 class="fw-bold mb-3"><?= esc($title); ?></h3>
         <h6 class="op-7 mb-2">All Activities Recorded in the System</h6>
     </div>
     <div class="ms-md-auto py-2 py-md-0">
@@ -15,13 +15,6 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card card-round">
-            <div class="card-header">
-                <div class="card-head-row card-tools-still-right">
-                    <div class="card-title">Riwayat Pengajuan</div>
-                    <div class="card-tools">
-                    </div>
-                </div>
-            </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-12">
@@ -155,9 +148,9 @@
                                 <div class="form-group p-0 mb-3">
                                     <label class="fw-bold mb-1">Tipe</label>
                                     <select name="tipe_kegiatan" class="form-select border-primary" required>
-                                        <option value="" <?= ($status_saat_ini == '' ? 'selected' : '') ?>>-- Pilih Status --</option>
-                                        <option value="Kurikuler" <?= ($status_saat_ini == 'Kurikuler' ? 'selected' : '') ?>>Kurikuler (Culikular)</option>
-                                        <option value="Kokulikuler" <?= ($status_saat_ini == 'Kokulikuler' ? 'selected' : '') ?>>Kokulikuler (Coculikular)</option>
+                                        <option value="" <?= ($kegiatan['tipe_kegiatan'] == '' ? 'selected' : '') ?>>-- Pilih Status --</option>
+                                        <option value="Kurikuler" <?= ($kegiatan['tipe_kegiatan'] == 'Kurikuler' ? 'selected' : '') ?>>Kurikuler (Culikular)</option>
+                                        <option value="Kokulikuler" <?= ($kegiatan['tipe_kegiatan'] == 'Kokulikuler' ? 'selected' : '') ?>>Kokulikuler (Coculikular)</option>
                                     </select>
                                 </div>
                                 <?php endif; ?>

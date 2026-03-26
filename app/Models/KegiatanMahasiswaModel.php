@@ -155,15 +155,15 @@ class KegiatanMahasiswaModel extends Model
             ->get()->getResultArray();
     }
 
-    public function getkegiatanverifikasi($otoritas)
+    public function getkegiatanverifikasi($otoritas, $prodi = null)
     {
         if ($otoritas == "KABIRO KEMAHASISWAAN" || $otoritas == "WAREK III") {
             return $this->join('kegiatan_mahasiswa_anggota', 'kegiatan_mahasiswa_anggota.id_kegiatan = kegiatan_mahasiswa.id_kegiatan')->where('status_pengajuan', 'Diverifikasi')->findAll();
         }
         elseif ($otoritas == "KETUA PROGRAM STUDI") {
-            return $this->join('kegiatan_mahasiswa_anggota', 'kegiatan_mahasiswa_anggota.id_kegiatan = kegiatan_mahasiswa.id_kegiatan')->where('status_pengajuan', 'Ditinjau')->findAll();
+            return $this->join('kegiatan_mahasiswa_anggota', 'kegiatan_mahasiswa_anggota.id_kegiatan = kegiatan_mahasiswa.id_kegiatan')->where(['status_pengajuan'=> 'Ditinjau', 'peran'=> 'Ketua', 'prodi' => $prodi])->findAll();
         }
-        return $this->join('kegiatan_mahasiswa_anggota', 'kegiatan_mahasiswa_anggota.id_kegiatan = kegiatan_mahasiswa.id_kegiatan')->where('status_pengajuan', 'Diajukan')->findAll();
+        return $this->join('kegiatan_mahasiswa_anggota', 'kegiatan_mahasiswa_anggota.id_kegiatan = kegiatan_mahasiswa.id_kegiatan')->where(['status_pengajuan'=> 'Diajukan', 'peran'=> 'Ketua'])->findAll();
     }
 
     // PIMPINAN DASHBOARD CHART DATA

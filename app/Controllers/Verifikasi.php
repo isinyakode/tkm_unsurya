@@ -54,9 +54,13 @@ class Verifikasi extends BaseController
         if (!$otoritas_aktif) {
             return redirect()->to('/Dashboard')->with('error', 'Akses ditolak.');
         }
-        // dd($otoritas_aktif);
+
         $kegiatan = $this->KegiatanMahasiswaModel->getkegiatanverifikasi($otoritas_aktif);
-        // dd($otoritas_aktif);
+        if($otoritas_aktif == "KETUA PROGRAM STUDI"){
+            $prodi = session()->get('prodi');
+            $kegiatan = $this->KegiatanMahasiswaModel->getkegiatanverifikasi($otoritas_aktif, $prodi);
+        }
+        // dd(session()->get());
         $data = [
             'title' => "Verifikasi Dokumen",
             'kegiatan' => $kegiatan,

